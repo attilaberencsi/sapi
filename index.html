@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SAP API Artifacts Viewer</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="container">
+    <section class="card">
+      <header class="header">
+        <div class="header-top">
+          <div>
+            <h1>
+              <a class="title-link" href="https://api.sap.com/products/SAPS4HANACloudPrivateEdition/overview" target="_blank" rel="noopener noreferrer">S/4HANA PCE</a>
+            </h1>
+            <p class="sub">Remote Public API Collection</p>
+          </div>
+          <div class="header-actions">
+            <button id="theme-toggle" class="theme-toggle" type="button" title="Toggle theme" aria-label="Toggle dark mode" aria-pressed="false">
+              <span class="icon sun" aria-hidden="true">☀️</span>
+              <span class="track" aria-hidden="true"><span class="thumb"></span></span>
+              <span class="icon moon" aria-hidden="true">🌙</span>
+            </button>
+            <button id="sync" type="button" title="Check for updates on api.sap.com">Sync</button>
+          </div>
+        </div>
+
+        <div class="controls">
+          <div class="search-wrap">
+            <input id="search" type="search" placeholder="Search text" autocomplete="off" />
+          </div>
+          <div id="subtype-filters" class="subtype-filters" hidden></div>
+          <span id="subtype-divider" class="controls-divider" hidden aria-hidden="true"></span>
+          <span id="status" class="status">Loading data...</span>
+        </div>
+      </header>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th class="sortable" data-column="DisplayName" data-sort="none" aria-sort="none">Display Name</th>
+              <th class="sortable" data-column="Name" data-sort="none" aria-sort="none">Name</th>
+              <th class="sortable" data-column="SubType" data-sort="none" aria-sort="none">SubType</th>
+              <th class="sortable" data-column="Version" data-sort="none" aria-sort="none">Version</th>
+              <th class="sortable" data-column="Description" data-sort="none" aria-sort="none">Description</th>
+              <th class="sortable" data-column="ModifiedAt" data-sort="none" aria-sort="none">Modified At</th>
+              <th class="sortable" data-column="State" data-sort="none" aria-sort="none">State</th>
+            </tr>
+          </thead>
+          <tbody id="rows"></tbody>
+        </table>
+        <div id="empty" class="empty" hidden>No matching records.</div>
+      </div>
+    </section>
+  </main>
+
+  <script src="index.js"></script>
+</body>
+</html>
