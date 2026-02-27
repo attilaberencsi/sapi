@@ -7,7 +7,8 @@ const displayColumns = [
   "Version",
   "Description",
   "ModifiedAt",
-  "State"
+  "State",
+  "Overview"
 ];
 
 const searchableColumns = [
@@ -227,6 +228,16 @@ function renderTable() {
     .map((record) => {
       const cells = displayColumns
         .map((column) => {
+          if (column === "Overview") {
+            const name = String(record.Name ?? "");
+            if (!name) {
+              return "<td></td>";
+            }
+
+            const href = `https://api.sap.com/api/${encodeURIComponent(name)}/overview`;
+            return `<td class="no-wrap"><a href="${href}" target="_blank" rel="noopener noreferrer">Overview</a></td>`;
+          }
+
           const text = String(toText(record, column));
           const content = highlightText(text, query);
           const noWrapClass = column === "Name" || column === "DisplayName" ? "no-wrap" : "";
