@@ -244,8 +244,7 @@ function triggerBackgroundSync(source, reason) {
   const nextPromise = (async () => {
     try {
       const count = await runSync(source);
-      const dataFileName = path.basename(source.dataFilePath);
-      console.log(`Sync completed (${source.key}/${reason}): ${count} records written to ${dataFileName}`);
+      const dataFileName = path.basename(source.dataFilePath);      
       return count;
     } catch (error) {
       const message = error instanceof Error ? error.message : "Unknown error";
