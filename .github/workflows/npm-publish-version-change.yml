@@ -24,6 +24,7 @@ jobs:
         with:
           node-version: "20.x"
           registry-url: "https://registry.npmjs.org"
+          scope: "@sapdev.eu"
 
       - name: Install dependencies
         run: npm install
@@ -50,11 +51,11 @@ jobs:
             echo "Version ${PKG_NAME}@${PKG_VERSION} not found on npm. Publishing."
           fi
 
-      - name: Configure npm auth and scope
+      - name: Verify npm auth
         if: steps.npm_check.outputs.publish == 'true'
-        run: |
-          echo "//registry.npmjs.org/:_authToken=${{ secrets.npmzero }}" > ~/.npmrc
-          echo "@sapdev.eu:registry=https://registry.npmjs.org/" >> ~/.npmrc
+        run: npm whoami
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.npmzero }}
 
       - name: Publish package
         if: steps.npm_check.outputs.publish == 'true'

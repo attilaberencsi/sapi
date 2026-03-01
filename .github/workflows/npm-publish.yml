@@ -23,14 +23,15 @@ jobs:
         with:
           node-version: "20.x"
           registry-url: "https://registry.npmjs.org"
+          scope: "@sapdev.eu"
 
       - name: Install dependencies
         run: npm install
 
-      - name: Configure npm auth and scope
-        run: |
-          echo "//registry.npmjs.org/:_authToken=${{ secrets.npmzero }}" > ~/.npmrc
-          echo "@sapdev.eu:registry=https://registry.npmjs.org/" >> ~/.npmrc
+      - name: Verify npm auth
+        run: npm whoami
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.npmzero }}
 
       - name: Publish package
         run: npm publish --access public
