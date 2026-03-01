@@ -4,16 +4,17 @@ const path = require("path");
 
 const HOST = "0.0.0.0";
 const PORT = Number(process.env.PORT) || 5000;
-const ROOT_DIR = process.cwd();
+const APP_DIR = __dirname;
+const DATA_DIR = APP_DIR;
 const SOURCES = {
   pce: {
     key: "pce",
-    dataFilePath: path.join(ROOT_DIR, "S4PCE.json"),
+    dataFilePath: path.join(DATA_DIR, "S4PCE.json"),
     remoteApiUrl: "https://api.sap.com/api/1.0/container/SAPS4HANACloudPrivateEdition/artifacts?containerType=product&$filter=Type%20eq%20%27API%27&$orderby=DisplayName%20asc"
   },
   cloud: {
     key: "cloud",
-    dataFilePath: path.join(ROOT_DIR, "S4Cloud.json"),
+    dataFilePath: path.join(DATA_DIR, "S4Cloud.json"),
     remoteApiUrl: "https://api.sap.com/api/1.0/container/SAPS4HANACloud/artifacts?containerType=product&$filter=Type%20eq%20%27API%27&$orderby=DisplayName%20asc"
   }
 };
@@ -44,14 +45,14 @@ function sendJson(response, statusCode, payload) {
 function getFilePathFromUrl(urlPathname) {
   const requestedPath = urlPathname === "/" ? "/index.html" : urlPathname;
   const normalizedPath = path.normalize(requestedPath).replace(/^([.][.][/\\])+/, "");
-  return path.join(ROOT_DIR, normalizedPath);
+  return path.join(APP_DIR, normalizedPath);
 }
 
 async function serveStaticFile(urlPathname, response) {
   const filePath = getFilePathFromUrl(urlPathname);
   const resolvedPath = path.resolve(filePath);
 
-  if (!resolvedPath.startsWith(path.resolve(ROOT_DIR))) {
+  if (!resolvedPath.startsWith(path.resolve(APP_DIR))) {
     response.writeHead(403);
     response.end("Forbidden");
     return;

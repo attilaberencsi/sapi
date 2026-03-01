@@ -1,6 +1,6 @@
 {
   "name": "@sapdev.eu/sapi",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "private": false,
   "description": "SAP Remote Public API Search",
   "main": "server.js",
