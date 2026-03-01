@@ -1,6 +1,6 @@
 {
   "name": "@sapdev.eu/sapi",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "private": false,
   "description": "SAP Remote Public API Search",
   "main": "server.js",
@@ -15,6 +15,7 @@
     "s4cloud.html",
     "index.js",
     "styles.css",
+    "favicon.svg",
     "S4PCE.json",
     "S4Cloud.json",
     "README.md",
