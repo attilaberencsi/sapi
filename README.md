@@ -27,24 +27,19 @@ Versionining by S/4HANA Feature Pack
 
 ## Installation
 
-1. Start directly from npm (recommended):
-   - `npx @sapdev.eu/sapi`
-2. Open:
-   - `http://localhost:5000`
-
-Alternative (global install):
-
 1. Install globally:
+
    - `npm i -g @sapdev.eu/sapi`
 2. Start app:
+
    - `sapi`
    - `sapdev-sapi`
+3. Open:
+
+   - `http://localhost:5000`
 
 ### Custom port options
 
-- `npx @sapdev.eu/sapi --port <port_number>`
-- `npx @sapdev.eu/sapi -p <port_number>`
-- `npx @sapdev.eu/sapi --port=<port_number>`
 - `sapi --port <port_number>`
 - `sapi -p <port_number>`
 - `sapi --port=<port_number>`
@@ -54,8 +49,6 @@ Alternative (global install):
 
 Environment variable alternatives (not tested):
 
-- Linux/macOS: `PORT=<port_number> npx @sapdev.eu/sapi`
-- PowerShell: `$env:PORT=<port_number>; npx @sapdev.eu/sapi`
 - Linux/macOS (global): `PORT=<port_number> sapi`
 - PowerShell (global): `$env:PORT=<port_number>; sapi`
 - Linux/macOS (global alias): `PORT=<port_number> sapdev-sapi`
