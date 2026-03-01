@@ -29,10 +29,11 @@ Versionining by S/4HANA Feature Pack
 
 1. Install globally:
 
-   - `npm i -g @sapdev.eu/sapi`
+   * `npm i -g "@sapdev.eu/sapi"`
 2. Start app:
 
    - `sapi`
+   - or
    - `sapdev-sapi`
 3. Open:
 
