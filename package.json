@@ -1,13 +1,49 @@
 {
-  "name": "sapi",
+  "name": "@sapdev.eu/sapi",
   "version": "1.0.0",
-  "private": true,
-  "description": "SAP Public API Search with Node.js proxy",
+  "private": false,
+  "description": "SAP Remote Public API Search",
   "main": "server.js",
+  "bin": {
+    "sapi": "bin/sapi.js",
+    "sapdev-sapi": "bin/sapi.js"
+  },
+  "files": [
+    "bin/sapi.js",
+    "server.js",
+    "index.html",
+    "s4cloud.html",
+    "index.js",
+    "styles.css",
+    "S4PCE.json",
+    "S4Cloud.json",
+    "README.md",
+    "LICENSE"
+  ],
   "scripts": {
-    "start": "node server.js"
+    "start": "node bin/sapi.js"
   },
   "engines": {
     "node": ">=18"
+  },
+  "keywords": [
+    "SAP",
+    "API",
+    "Search",
+    "sapdev.eu"
+  ],
+  "author": "Attila Berencsi",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/attilaberencsi/sapi/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/attilaberencsi/sapi.git"
+  },
+  "homepage": "https://github.com/attilaberencsi/sapi#readme",
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org"
   }
 }

@@ -5,13 +5,23 @@ const path = require("path");
 const HOST = "0.0.0.0";
 const PORT = Number(process.env.PORT) || 5000;
 const ROOT_DIR = process.cwd();
-const DATA_FILE_PATH = path.join(ROOT_DIR, "S4PCE.json");
-const REMOTE_API_URL = "https://api.sap.com/api/1.0/container/SAPS4HANACloudPrivateEdition/artifacts?containerType=product&$filter=Type%20eq%20%27API%27&$orderby=DisplayName%20asc";
+const SOURCES = {
+  pce: {
+    key: "pce",
+    dataFilePath: path.join(ROOT_DIR, "S4PCE.json"),
+    remoteApiUrl: "https://api.sap.com/api/1.0/container/SAPS4HANACloudPrivateEdition/artifacts?containerType=product&$filter=Type%20eq%20%27API%27&$orderby=DisplayName%20asc"
+  },
+  cloud: {
+    key: "cloud",
+    dataFilePath: path.join(ROOT_DIR, "S4Cloud.json"),
+    remoteApiUrl: "https://api.sap.com/api/1.0/container/SAPS4HANACloud/artifacts?containerType=product&$filter=Type%20eq%20%27API%27&$orderby=DisplayName%20asc"
+  }
+};
 const PAGE_SIZE = 1000;
 const MAX_PAGES = 100;
 const FETCH_TIMEOUT_MS = 20000;
 const MAX_FETCH_ATTEMPTS = 2;
-let activeSyncPromise = null;
+const activeSyncPromises = new Map();
 
 const CONTENT_TYPES = {
   ".html": "text/html; charset=utf-8",
@@ -66,12 +76,12 @@ async function serveStaticFile(urlPathname, response) {
   }
 }
 
-async function proxyArtifacts(response) {
+async function proxyArtifacts(response, source) {
   try {
-    const records = await readArtifactsFromFile();
+    const records = await readArtifactsFromFile(source);
 
     if (records.length === 0) {
-      triggerBackgroundSync("auto-empty-file").catch(() => {
+      triggerBackgroundSync(source, "auto-empty-file").catch(() => {
       });
     }
 
@@ -84,9 +94,9 @@ async function proxyArtifacts(response) {
   }
 }
 
-async function readArtifactsFromFile() {
+async function readArtifactsFromFile(source) {
   try {
-    const fileContent = await fs.readFile(DATA_FILE_PATH, "utf8");
+    const fileContent = await fs.readFile(source.dataFilePath, "utf8");
     if (!fileContent.trim()) {
       return [];
     }
@@ -102,13 +112,13 @@ async function readArtifactsFromFile() {
   }
 }
 
-async function fetchArtifactsFromUpstream() {
+async function fetchArtifactsFromUpstream(source) {
   const allRecords = [];
   const seenRecordKeys = new Set();
 
   for (let pageIndex = 0; pageIndex < MAX_PAGES; pageIndex += 1) {
     const skip = pageIndex * PAGE_SIZE;
-    const pageUrl = new URL(REMOTE_API_URL);
+    const pageUrl = new URL(source.remoteApiUrl);
     pageUrl.searchParams.set("$top", String(PAGE_SIZE));
     pageUrl.searchParams.set("$skip", String(skip));
 
@@ -217,39 +227,42 @@ async function fetchUpstreamPage(pageUrl, pageIndex) {
   throw lastError || new Error("Unknown upstream fetch error");
 }
 
-async function runSync() {
-  const allRecords = await fetchArtifactsFromUpstream();
-  const tempFilePath = `${DATA_FILE_PATH}.tmp`;
+async function runSync(source) {
+  const allRecords = await fetchArtifactsFromUpstream(source);
+  const tempFilePath = `${source.dataFilePath}.tmp`;
   await fs.writeFile(tempFilePath, JSON.stringify(allRecords, null, 2), "utf8");
-  await fs.rename(tempFilePath, DATA_FILE_PATH);
+  await fs.rename(tempFilePath, source.dataFilePath);
   return allRecords.length;
 }
 
-function triggerBackgroundSync(reason) {
-  if (activeSyncPromise) {
-    return activeSyncPromise;
+function triggerBackgroundSync(source, reason) {
+  const currentPromise = activeSyncPromises.get(source.key);
+  if (currentPromise) {
+    return currentPromise;
   }
 
-  activeSyncPromise = (async () => {
+  const nextPromise = (async () => {
     try {
-      const count = await runSync();
-      console.log(`Sync completed (${reason}): ${count} records written to S4PCE.json`);
+      const count = await runSync(source);
+      const dataFileName = path.basename(source.dataFilePath);
+      console.log(`Sync completed (${source.key}/${reason}): ${count} records written to ${dataFileName}`);
       return count;
     } catch (error) {
       const message = error instanceof Error ? error.message : "Unknown error";
-      console.error(`Sync failed (${reason}): ${message}`);
+      console.error(`Sync failed (${source.key}/${reason}): ${message}`);
       throw error;
     } finally {
-      activeSyncPromise = null;
+      activeSyncPromises.delete(source.key);
     }
   })();
 
-  return activeSyncPromise;
+  activeSyncPromises.set(source.key, nextPromise);
+  return nextPromise;
 }
 
-async function syncArtifacts(response) {
+async function syncArtifacts(response, source) {
   try {
-    const syncedCount = await triggerBackgroundSync("manual-sync-button");
+    const syncedCount = await triggerBackgroundSync(source, "manual-sync-button");
     sendJson(response, 200, {
       ok: true,
       count: syncedCount
@@ -263,16 +276,16 @@ async function syncArtifacts(response) {
   }
 }
 
-async function ensureInitialDataSync() {
+async function ensureInitialDataSync(source) {
   try {
-    const records = await readArtifactsFromFile();
+    const records = await readArtifactsFromFile(source);
     if (records.length === 0) {
-      triggerBackgroundSync("startup-empty-file").catch(() => {
+      triggerBackgroundSync(source, "startup-empty-file").catch(() => {
       });
     }
   } catch (error) {
-    console.error("Failed to check initial cache file:", error);
-    triggerBackgroundSync("startup-read-error").catch(() => {
+    console.error(`Failed to check initial cache file (${source.key}):`, error);
+    triggerBackgroundSync(source, "startup-read-error").catch(() => {
     });
   }
 }
@@ -281,23 +294,33 @@ const server = http.createServer(async (request, response) => {
   const parsedUrl = new URL(request.url, `http://${request.headers.host}`);
 
   if (request.method === "GET" && parsedUrl.pathname === "/api/artifacts") {
-    await proxyArtifacts(response);
+    await proxyArtifacts(response, SOURCES.pce);
     return;
   }
 
   if (request.method === "POST" && parsedUrl.pathname === "/api/sync") {
-    await syncArtifacts(response);
+    await syncArtifacts(response, SOURCES.pce);
+    return;
+  }
+
+  if (request.method === "GET" && parsedUrl.pathname === "/api/s4cloud/artifacts") {
+    await proxyArtifacts(response, SOURCES.cloud);
+    return;
+  }
+
+  if (request.method === "POST" && parsedUrl.pathname === "/api/s4cloud/sync") {
+    await syncArtifacts(response, SOURCES.cloud);
     return;
   }
 
   if (request.method === "POST") {
-    response.writeHead(405, { Allow: "GET, HEAD, POST /api/sync" });
+    response.writeHead(405, { Allow: "GET, HEAD, POST /api/sync, POST /api/s4cloud/sync" });
     response.end("Method Not Allowed");
     return;
   }
 
   if (request.method !== "GET" && request.method !== "HEAD" && request.method !== "POST") {
-    response.writeHead(405, { Allow: "GET, HEAD, POST /api/sync" });
+    response.writeHead(405, { Allow: "GET, HEAD, POST /api/sync, POST /api/s4cloud/sync" });
     response.end("Method Not Allowed");
     return;
   }
@@ -307,5 +330,6 @@ const server = http.createServer(async (request, response) => {
 
 server.listen(PORT, HOST, () => {
   console.log(`Server running at http://localhost:${PORT}`);
-  ensureInitialDataSync();
+  ensureInitialDataSync(SOURCES.pce);
+  ensureInitialDataSync(SOURCES.cloud);
 });

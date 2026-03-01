@@ -1,4 +1,5 @@
-const API_URL = "/api/artifacts";
+const API_URL = document.body.dataset.apiUrl || "/api/artifacts";
+const SYNC_URL = document.body.dataset.syncUrl || "/api/sync";
 
 const displayColumns = [
   "DisplayName",
@@ -308,7 +309,7 @@ async function syncData() {
   setButtonsDisabled(true);
 
   try {
-    const response = await fetch("/api/sync", {
+    const response = await fetch(SYNC_URL, {
       method: "POST",
       headers: {
         Accept: "application/json"

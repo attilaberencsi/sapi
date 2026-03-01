@@ -97,6 +97,44 @@ body {
   gap: 0.5rem;
 }
 
+.header-middle {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex: 1;
+}
+
+.view-switch-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.view-switch {
+  border: 1px solid var(--border);
+  background: var(--control-bg);
+  border-radius: 10px;
+  padding: 0.65rem 0.9rem;
+  cursor: pointer;
+  font-weight: 600;
+  color: var(--text);
+  text-decoration: none;
+  line-height: 1;
+}
+
+.view-switch:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.view-switch.is-active {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  color: var(--pill-text);
+  pointer-events: none;
+  cursor: default;
+}
+
 h1 {
   margin: 0;
   font-size: 1.25rem;

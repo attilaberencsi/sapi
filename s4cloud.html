@@ -6,21 +6,21 @@
   <title>SAP API Artifacts Viewer</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
-<body>
+<body data-api-url="/api/s4cloud/artifacts" data-sync-url="/api/s4cloud/sync">
   <main class="container">
     <section class="card">
       <header class="header">
         <div class="header-top">
           <div>
             <h1>
-              <a class="title-link" href="https://api.sap.com/products/SAPS4HANACloudPrivateEdition/overview" target="_blank" rel="noopener noreferrer">S/4HANA PCE</a>
+              <a class="title-link" href="https://api.sap.com/products/SAPS4HANACloud/overview" target="_blank" rel="noopener noreferrer">S/4HANA Public Cloud</a>
             </h1>
             <p class="sub">Remote Public API Collection</p>
           </div>
           <div class="header-middle">
             <div class="view-switch-group" role="navigation" aria-label="Environment switch">
-              <a class="view-switch is-active" href="index.html" aria-current="page">Private Edition</a>
-              <a class="view-switch" href="s4cloud.html">Public Cloud</a>
+              <a class="view-switch" href="index.html">Private Edition</a>
+              <a class="view-switch is-active" href="s4cloud.html" aria-current="page">Public Cloud</a>
             </div>
           </div>
           <div class="header-actions">
