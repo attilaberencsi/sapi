@@ -13,6 +13,7 @@ A lightweight SAP API search for:
 - Filter by protocol
 - Deprecated indicator
 - Version
+  Link to launch api.sap.com for more details (requires logon)
 - API Package Assigment Name (SOD2)
 - Dark / light theme toggle
 
