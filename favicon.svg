@@ -1,12 +1,11 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Clown face favicon">
-  <rect width="64" height="64" rx="12" fill="#14213d"/>
-  <circle cx="32" cy="34" r="17" fill="#fff7e6"/>
-  <circle cx="18" cy="34" r="7" fill="#ff4d6d"/>
-  <circle cx="46" cy="34" r="7" fill="#ff4d6d"/>
-  <ellipse cx="26" cy="31" rx="2.5" ry="3.5" fill="#1b1b1b"/>
-  <ellipse cx="38" cy="31" rx="2.5" ry="3.5" fill="#1b1b1b"/>
-  <circle cx="32" cy="37" r="4.5" fill="#e63946"/>
-  <path d="M23 44c2 3 4.6 4.5 9 4.5s7-1.5 9-4.5" fill="none" stroke="#d90429" stroke-width="3" stroke-linecap="round"/>
-  <path d="M19 20l5-7 4 7" fill="#ffbe0b"/>
-  <path d="M36 20l4-7 5 7" fill="#3a86ff"/>
+  <circle cx="9" cy="35" r="9" fill="#ff5d8f"/>
+  <circle cx="55" cy="35" r="9" fill="#ff5d8f"/>
+  <circle cx="32" cy="34" r="22" fill="#fffaf2" stroke="#ffcc4d" stroke-width="2.4"/>
+  <path d="M16 18L27 18L21.5 7Z" fill="#ffcc4d"/>
+  <path d="M37 18L48 18L42.5 7Z" fill="#4f8dff"/>
+  <circle cx="25" cy="30" r="3.5" fill="#22324a"/>
+  <circle cx="39" cy="30" r="3.5" fill="#22324a"/>
+  <circle cx="32" cy="38" r="6" fill="#ff3b5c"/>
+  <path d="M20 47C23.5 52 27.5 54 32 54C36.5 54 40.5 52 44 47" fill="none" stroke="#ff3b5c" stroke-width="3.8" stroke-linecap="round"/>
 </svg>
